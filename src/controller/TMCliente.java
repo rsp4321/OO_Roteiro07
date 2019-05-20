@@ -15,6 +15,7 @@ import javax.swing.table.AbstractTableModel;
     private final int COL_SEXO = 1;
     private final int COL_IDADE = 2;
     private final int COL_CPF = 3;
+    private final int COL_QTD_COMPRAS = 4;
 
     //Construtor
     public TMCliente(List<Cliente> lst) {
@@ -27,7 +28,8 @@ import javax.swing.table.AbstractTableModel;
     }
 
     public int getColumnCount() {
-        return 4;
+//        return 4;
+        return 5;
     }
 
     public String getColumnName(int columnIndex) {
@@ -39,7 +41,9 @@ import javax.swing.table.AbstractTableModel;
             return "IDADE";
         } else if (columnIndex == COL_CPF) {
             return "CPF";
-        }
+        
+        } else if (columnIndex == this.COL_QTD_COMPRAS)
+            return "QTD_COMPRAS";
         
         // Retornando o nome "-" indicando que não foi encontrada uma coluna com o índice indicado
         return "-";
@@ -57,7 +61,10 @@ import javax.swing.table.AbstractTableModel;
             return a.getIdade();
         } else if (col == COL_CPF) {
             return a.getCpf();
-        }
+        
+        } else if (col == this.COL_QTD_COMPRAS)
+            return a.getQtd_compras();
+        
         return "-";
     }
 

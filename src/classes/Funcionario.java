@@ -3,7 +3,7 @@ package classes;
 /*
  * @author Arma X
  */
-abstract class Funcionario extends Pessoa {
+abstract class Funcionario extends Pessoa  {
 
     protected float horasTrabalho;
     protected float salario;

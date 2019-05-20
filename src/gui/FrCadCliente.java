@@ -94,6 +94,9 @@ public class FrCadCliente extends javax.swing.JFrame implements TabelaAtualizave
         grdLista = new javax.swing.JTable();
         btnExportarCSV = new javax.swing.JButton();
         btnImportarCSV = new javax.swing.JButton();
+        lblQtdCompras = new javax.swing.JLabel();
+        edtQtdCompras = new javax.swing.JTextField();
+        btnCalcularBonificacao = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -182,6 +185,15 @@ public class FrCadCliente extends javax.swing.JFrame implements TabelaAtualizave
             }
         });
 
+        lblQtdCompras.setText("Quantidade de compras feitas");
+
+        btnCalcularBonificacao.setText("Calcular bônus!");
+        btnCalcularBonificacao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCalcularBonificacaoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -210,17 +222,25 @@ public class FrCadCliente extends javax.swing.JFrame implements TabelaAtualizave
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(edtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGap(57, 57, 57)
-                                .addComponent(lblSexo)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(lblSexo)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(edtSexo, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(lblIdade)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(edtIdade, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(29, 29, 29)
+                                        .addComponent(lblCpf))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(lblQtdCompras)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(edtQtdCompras)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(edtSexo, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(lblIdade)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(edtIdade, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(29, 29, 29)
-                                .addComponent(lblCpf)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(edtCpf, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(edtCpf, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(btnCalcularBonificacao)))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addComponent(btnExportarCSV, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -238,7 +258,7 @@ public class FrCadCliente extends javax.swing.JFrame implements TabelaAtualizave
                                         .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addComponent(btnImportarCSV, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                         .addGap(1, 1, 1)))
-                .addContainerGap(129, Short.MAX_VALUE))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -272,9 +292,13 @@ public class FrCadCliente extends javax.swing.JFrame implements TabelaAtualizave
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(lblSalario)
-                            .addComponent(edtSalario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(20, 20, 20)
-                .addComponent(jScrollPane1)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(edtSalario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(lblQtdCompras)
+                                .addComponent(edtQtdCompras, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnCalcularBonificacao)))))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 422, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -330,6 +354,15 @@ public class FrCadCliente extends javax.swing.JFrame implements TabelaAtualizave
         this.importarCSV(); // Chamando o método definido via interface
     }//GEN-LAST:event_btnImportarCSVActionPerformed
 
+    private void btnCalcularBonificacaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCalcularBonificacaoActionPerformed
+
+        Cliente c = this.gerarObjetoCliente();
+
+        // Exibindo o valor do bônus
+        JOptionPane.showMessageDialog(this, "O valor do bônus é: " + c.getBonificacao(), "Bônus",
+                JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_btnCalcularBonificacaoActionPerformed
+
     private void limparTexto() {
         edtNome.setText("");
         edtIdade.setText("");
@@ -347,9 +380,11 @@ public class FrCadCliente extends javax.swing.JFrame implements TabelaAtualizave
         int idade = Integer.parseInt(edtIdade.getText());
         char sexo = edtSexo.getText().charAt(0);
         String cpf = edtCpf.getText();
+        int qtd_compras = Integer.parseInt(edtQtdCompras.getText());
 
         Cliente c = new Cliente();
-        c.preencher(nome, sexo, idade, cpf);
+//        c.preencher(nome, sexo, idade, cpf);
+        c.preencher(nome, sexo, idade, cpf, qtd_compras);
 
         lstCliente.add(c);
 
@@ -363,6 +398,32 @@ public class FrCadCliente extends javax.swing.JFrame implements TabelaAtualizave
 //        this.grdLista.setModel(tm_cliente);
         // Chamando a rotina de atualização da tabela
         this.atualizarTabela();
+
+    }
+
+    private Cliente gerarObjetoCliente() {
+        String nome = edtNome.getText();
+        int idade = Integer.parseInt(edtIdade.getText());
+        char sexo = edtSexo.getText().charAt(0);
+        String cpf = edtCpf.getText();
+        int qtd_compras = Integer.parseInt(edtQtdCompras.getText());
+
+        Cliente c = new Cliente();
+//        c.preencher(nome, sexo, idade, cpf);
+        c.preencher(nome, sexo, idade, cpf, qtd_compras);
+
+//        lstCliente.add(c);
+//        String imprimirFr = "";
+//        for (int i = 0; i < lstCliente.size(); ++i) {
+//            imprimirFr = imprimirFr + lstCliente.get(i).imprimir() + "\n\n";
+//        }
+//        edtResultado.setText(imprimirFr);
+        // Readicionando a lista para atualizar o objeto jTable "grdLista
+//        TMCliente tm_cliente = new TMCliente(this.lstCliente);
+//        this.grdLista.setModel(tm_cliente);
+        // Chamando a rotina de atualização da tabela
+//        this.atualizarTabela();
+        return c;
 
     }
 
@@ -390,6 +451,7 @@ public class FrCadCliente extends javax.swing.JFrame implements TabelaAtualizave
     public void exportarParaCSV( /* String nome_arquivo */) /* throws Exception */ {
 
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//
         // Vamos utilizar a classe java.file.FileWriter para salvar no arquivo
         FileWriter file_writer_arquivo = null;
 
@@ -449,6 +511,8 @@ public class FrCadCliente extends javax.swing.JFrame implements TabelaAtualizave
 //            csv += lista.get(i).getSexo() + ";\n";      // campo "sexo"
 //            csv += lista.get(i).getSexo() + ";";        // Para corrigir um incidente envolvendo o método de leitura, onde se lê o caracter "\n"
             csv += this.lstCliente.get(i).getSexo() + ";";        // Para corrigir um incidente envolvendo o método de leitura, onde se lê o caracter "\n"
+
+            csv += this.lstCliente.get(i).getQtd_compras() + ";";
         }
 
         return csv;
@@ -481,6 +545,7 @@ public class FrCadCliente extends javax.swing.JFrame implements TabelaAtualizave
 
             String nome = "";
             char sexo = 'M';
+            int qtd_compras = -1;
 
             // Ordem de colunas: Matricula -> Nome -> Idade -> Sexo
             // A estratégia é percorrer os campos até não haver mais nenhum para ler (informado pelo método sc_Arquivo.hasNext() )
@@ -501,6 +566,7 @@ public class FrCadCliente extends javax.swing.JFrame implements TabelaAtualizave
             final int CAMPO_NOME = 1;
             final int CAMPO_IDADE = 2;
             final int CAMPO_SEXO = 3;
+            final int CAMPO_QTD_COMPRAS = 4;
 
             while (sc_arquivo.hasNext()) {
 
@@ -523,13 +589,19 @@ public class FrCadCliente extends javax.swing.JFrame implements TabelaAtualizave
                         break;
 
                     case CAMPO_SEXO:
-
-                        // Como o sexo é o último campo, vamos instanciar o objeto e armazenar na lista
                         sexo = sc_arquivo.next().charAt(0); // Por se tratar de um char, tem que retirar apenas o primeiro caracter
 
+                        
+                    case CAMPO_QTD_COMPRAS:
+                        
+                        // Como a quantidade de compras é o último campo, vamos instanciar o objeto e armazenar na lista
+                        qtd_compras = sc_arquivo.nextInt();
+                        
 //                        Aluno a = new Aluno(nome, sexo, idade, cpf);  // Instanciando o aluno
                         Cliente a = new Cliente();  // Instanciando o cliente
-                        a.preencher(nome, sexo, idade, cpf);
+                        
+//                        a.preencher(nome, sexo, idade, cpf);
+                        a.preencher(nome, sexo, idade, cpf, qtd_compras);
 
                         lstCliente.add(a);
                         break;
@@ -610,6 +682,7 @@ public class FrCadCliente extends javax.swing.JFrame implements TabelaAtualizave
 //    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCalcularBonificacao;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnExcluir;
@@ -621,6 +694,7 @@ public class FrCadCliente extends javax.swing.JFrame implements TabelaAtualizave
     private javax.swing.JTextField edtCpf;
     private javax.swing.JTextField edtIdade;
     private javax.swing.JTextField edtNome;
+    private javax.swing.JTextField edtQtdCompras;
     private javax.swing.JTextField edtSalario;
     private javax.swing.JTextField edtSexo;
     private javax.swing.JTable grdLista;
@@ -628,6 +702,7 @@ public class FrCadCliente extends javax.swing.JFrame implements TabelaAtualizave
     private javax.swing.JLabel lblCpf;
     private javax.swing.JLabel lblIdade;
     private javax.swing.JLabel lblNome;
+    private javax.swing.JLabel lblQtdCompras;
     private javax.swing.JLabel lblSalario;
     private javax.swing.JLabel lblSexo;
     private javax.swing.JLabel lblTitulo;
