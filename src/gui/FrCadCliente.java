@@ -2,19 +2,45 @@ package gui;
 
 import classes.*;
 import controller.*;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /*
  * @author Arma X
  */
-public class FrCadCliente extends javax.swing.JFrame {
+public class FrCadCliente extends javax.swing.JFrame implements TabelaAtualizavel, ExportavelParaCSV, ImportavelViaCSV {
 
     public ArrayList<Cliente> lstCliente;
-    public ArrayList<Engenheiro> lstEngenheiro;
-    public ArrayList<Diretor> lstDiretor;
-    public ArrayList<Secretario> lstSecretario;
-    public ArrayList<Gerente> lstGerente;
-    private TMCliente tm_cliente;
+
+//    public ArrayList<Engenheiro> lstEngenheiro;
+//    public ArrayList<Diretor> lstDiretor;
+//    public ArrayList<Secretario> lstSecretario;
+//    public ArrayList<Gerente> lstGerente;
+//    private TMCliente tm_cliente;
+//    
+//    
+    private final String NOME_ARQUIVO = "registro_cliente.txt";
+
+    // Como a equipe está desenvolvendo tanto no Windows quanto no linux,
+    // vou utilizar a classe java.nio.file.Path para abstrair os diretórios
+    // sem precisar utlizar métodos de detecção do sistema operacional por enquanto
+    private final Path caminho_arquivo = Paths.get( // O objeto "Paths" constrói o objeto "Path" conforme as "partes" do diretório dadas
+            System.getProperty("user.home") // a rotina System.getProperty() retorna algumas variáveis de ambiente definidas pela JVM no momento da execução. A veriável "user.home" retorna o diretório do usuário no sistema operacional
+            ,
+             "OO_Roteiro07" // Essa "parte" indica que se trata da pasta "OO_Aula5"
+            //                "registro.txt");                    // Essa "parte" indica o arquivo
+            ,
+             NOME_ARQUIVO
+    );
 
     public FrCadCliente() {
         initComponents();
@@ -23,18 +49,21 @@ public class FrCadCliente extends javax.swing.JFrame {
         edtSexo.setEnabled(false);
         edtSalario.setEnabled(false);
         edtCpf.setEnabled(false);
-        edtGerenciaFuncionarios.setEnabled(false);
-        edtSenha.setEnabled(false);
-        edtCargaHoraria.setEnabled(false);
 
+//        edtGerenciaFuncionarios.setEnabled(false);
+//        edtSenha.setEnabled(false);
+//        edtCargaHoraria.setEnabled(false);
         this.lstCliente = new ArrayList();
-        this.lstEngenheiro = new ArrayList();
-        this.lstGerente = new ArrayList();
-        this.lstDiretor = new ArrayList();
-        this.lstSecretario = new ArrayList();
-        
+
+//        this.lstEngenheiro = new ArrayList();
+//        this.lstGerente = new ArrayList();
+//        this.lstDiretor = new ArrayList();
+//        this.lstSecretario = new ArrayList();
         // inicializando a tabela
-        this.tm_cliente = new TMCliente(this.lstCliente);
+//        this.tm_cliente = new TMCliente(this.lstCliente);
+//        TMCliente tm_cliente = new TMCliente(this.lstCliente);
+//        this.grdLista.setModel(tm_cliente);
+        this.atualizarTabela();
     }
 
     /**
@@ -51,29 +80,20 @@ public class FrCadCliente extends javax.swing.JFrame {
         lblIdade = new javax.swing.JLabel();
         lblCpf = new javax.swing.JLabel();
         lblSalario = new javax.swing.JLabel();
-        lblSenha = new javax.swing.JLabel();
-        lblCargaHoraria = new javax.swing.JLabel();
-        lblGerenciaFuncionarios = new javax.swing.JLabel();
         edtNome = new javax.swing.JTextField();
         edtSexo = new javax.swing.JTextField();
         edtIdade = new javax.swing.JTextField();
         edtCpf = new javax.swing.JTextField();
         edtSalario = new javax.swing.JTextField();
-        edtSenha = new javax.swing.JTextField();
-        edtCargaHoraria = new javax.swing.JTextField();
-        edtGerenciaFuncionarios = new javax.swing.JTextField();
-        btnCliente = new javax.swing.JRadioButton();
-        btnEngenheiro = new javax.swing.JRadioButton();
-        btnGerente = new javax.swing.JRadioButton();
-        btnDiretor = new javax.swing.JRadioButton();
-        btnSecretario = new javax.swing.JRadioButton();
         btnNovo = new javax.swing.JButton();
         btnEditar = new javax.swing.JButton();
         btnSalvar = new javax.swing.JButton();
         btnExcluir = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTableLista = new javax.swing.JTable();
+        grdLista = new javax.swing.JTable();
+        btnExportarCSV = new javax.swing.JButton();
+        btnImportarCSV = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -90,64 +110,17 @@ public class FrCadCliente extends javax.swing.JFrame {
 
         lblSalario.setText("Salário");
 
-        lblSenha.setText("Senha");
-
-        lblCargaHoraria.setText("Carga Horária");
-
-        lblGerenciaFuncionarios.setText("Nº Funcionários");
-
-        btnGrupo.add(btnCliente);
-        btnCliente.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        btnCliente.setText("Cliente");
-        btnCliente.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnClienteActionPerformed(evt);
-            }
-        });
-
-        btnGrupo.add(btnEngenheiro);
-        btnEngenheiro.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        btnEngenheiro.setText("Engenheiro");
-        btnEngenheiro.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEngenheiroActionPerformed(evt);
-            }
-        });
-
-        btnGrupo.add(btnGerente);
-        btnGerente.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        btnGerente.setText("Gerente");
-        btnGerente.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGerenteActionPerformed(evt);
-            }
-        });
-
-        btnGrupo.add(btnDiretor);
-        btnDiretor.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        btnDiretor.setText("Diretor");
-        btnDiretor.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDiretorActionPerformed(evt);
-            }
-        });
-
-        btnGrupo.add(btnSecretario);
-        btnSecretario.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        btnSecretario.setText("Secretario");
-        btnSecretario.setToolTipText("");
-        btnSecretario.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSecretarioActionPerformed(evt);
-            }
-        });
-
         btnNovo.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnNovo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/novo.png"))); // NOI18N
         btnNovo.setText("NOVO");
         btnNovo.setMaximumSize(new java.awt.Dimension(150, 45));
         btnNovo.setMinimumSize(new java.awt.Dimension(150, 45));
         btnNovo.setPreferredSize(new java.awt.Dimension(150, 45));
+        btnNovo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNovoActionPerformed(evt);
+            }
+        });
 
         btnEditar.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnEditar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/editar.png"))); // NOI18N
@@ -182,7 +155,7 @@ public class FrCadCliente extends javax.swing.JFrame {
         btnCancelar.setMinimumSize(new java.awt.Dimension(150, 45));
         btnCancelar.setPreferredSize(new java.awt.Dimension(150, 45));
 
-        jTableLista.setModel(new javax.swing.table.DefaultTableModel(
+        grdLista.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -193,7 +166,21 @@ public class FrCadCliente extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTableLista);
+        jScrollPane1.setViewportView(grdLista);
+
+        btnExportarCSV.setText("Exportar para CSV");
+        btnExportarCSV.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExportarCSVActionPerformed(evt);
+            }
+        });
+
+        btnImportarCSV.setText("Importar do CSV");
+        btnImportarCSV.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnImportarCSVActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -213,64 +200,44 @@ public class FrCadCliente extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(73, 73, 73)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(lblSalario)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(edtSalario, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(lblCargaHoraria)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(edtCargaHoraria, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(lblNome)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(edtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                        .addGap(33, 33, 33)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                                .addGap(39, 39, 39)
-                                                .addComponent(lblGerenciaFuncionarios)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(edtGerenciaFuncionarios, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(lblSenha)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(edtSenha, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                                .addComponent(lblSexo)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(edtSexo, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(lblIdade)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(edtIdade, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(29, 29, 29)
-                                                .addComponent(lblCpf)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(edtCpf, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addComponent(btnCliente)
-                                        .addGap(32, 32, 32)
-                                        .addComponent(btnEngenheiro)
-                                        .addGap(43, 43, 43)
-                                        .addComponent(btnGerente)
-                                        .addGap(38, 38, 38)
-                                        .addComponent(btnDiretor)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(btnSecretario))))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnNovo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(lblSalario)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(edtSalario, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(lblNome)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(edtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(57, 57, 57)
+                                .addComponent(lblSexo)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(edtSexo, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(lblIdade)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(edtIdade, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(29, 29, 29)
+                                .addComponent(lblCpf)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(edtCpf, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(btnExportarCSV, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(btnNovo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(btnImportarCSV, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(1, 1, 1)))
                 .addContainerGap(129, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -285,110 +252,34 @@ public class FrCadCliente extends javax.swing.JFrame {
                     .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnImportarCSV, javax.swing.GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE)
+                    .addComponent(btnExportarCSV, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(27, 27, 27)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCliente)
-                    .addComponent(btnEngenheiro)
-                    .addComponent(btnGerente)
-                    .addComponent(btnDiretor)
-                    .addComponent(btnSecretario))
-                .addGap(28, 28, 28)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(lblIdade)
-                            .addComponent(edtIdade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblSexo)
-                            .addComponent(edtSexo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblCpf)
-                            .addComponent(edtCpf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(lblGerenciaFuncionarios)
-                            .addComponent(edtGerenciaFuncionarios, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblSenha)
-                            .addComponent(edtSenha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(lblIdade)
+                        .addComponent(edtIdade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lblSexo)
+                        .addComponent(edtSexo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lblCpf)
+                        .addComponent(edtCpf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(lblNome)
                             .addComponent(edtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(lblSalario)
-                                .addComponent(edtSalario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGap(6, 6, 6)
-                                    .addComponent(lblCargaHoraria))
-                                .addComponent(edtCargaHoraria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(lblSalario)
+                            .addComponent(edtSalario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(20, 20, 20)
                 .addComponent(jScrollPane1)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClienteActionPerformed
-        // TODO add your handling code here:
-        edtNome.setEnabled(true);
-        edtIdade.setEnabled(true);
-        edtSexo.setEnabled(true);
-        edtSalario.setEnabled(false);
-        edtCpf.setEnabled(true);
-        edtGerenciaFuncionarios.setEnabled(false);
-        edtSenha.setEnabled(false);
-        edtCargaHoraria.setEnabled(false);
-    }//GEN-LAST:event_btnClienteActionPerformed
-
-    private void btnEngenheiroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEngenheiroActionPerformed
-        // TODO add your handling code here:
-        edtNome.setEnabled(true);
-        edtIdade.setEnabled(true);
-        edtSexo.setEnabled(true);
-        edtSalario.setEnabled(true);
-        edtCpf.setEnabled(false);
-        edtGerenciaFuncionarios.setEnabled(false);
-        edtSenha.setEnabled(false);
-        edtCargaHoraria.setEnabled(true);
-    }//GEN-LAST:event_btnEngenheiroActionPerformed
-
-    private void btnGerenteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerenteActionPerformed
-        // TODO add your handling code here:
-        edtNome.setEnabled(true);
-        edtIdade.setEnabled(true);
-        edtSexo.setEnabled(true);
-        edtSalario.setEnabled(true);
-        edtCpf.setEnabled(false);
-        edtGerenciaFuncionarios.setEnabled(true);
-        edtSenha.setEnabled(true);
-        edtCargaHoraria.setEnabled(true);
-    }//GEN-LAST:event_btnGerenteActionPerformed
-
-    private void btnDiretorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDiretorActionPerformed
-        // TODO add your handling code here:
-        edtNome.setEnabled(true);
-        edtIdade.setEnabled(true);
-        edtSexo.setEnabled(true);
-        edtSalario.setEnabled(true);
-        edtCpf.setEnabled(false);
-        edtGerenciaFuncionarios.setEnabled(false);
-        edtSenha.setEnabled(true);
-        edtCargaHoraria.setEnabled(true);
-    }//GEN-LAST:event_btnDiretorActionPerformed
-
-    private void btnSecretarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSecretarioActionPerformed
-        // TODO add your handling code here:
-        edtNome.setEnabled(true);
-        edtIdade.setEnabled(true);
-        edtSexo.setEnabled(true);
-        edtSalario.setEnabled(true);
-        edtCpf.setEnabled(false);
-        edtGerenciaFuncionarios.setEnabled(false);
-        edtSenha.setEnabled(false);
-        edtCargaHoraria.setEnabled(true);
-    }//GEN-LAST:event_btnSecretarioActionPerformed
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
         // TODO add your handling code here:
@@ -417,15 +308,38 @@ public class FrCadCliente extends javax.swing.JFrame {
         limparTexto();
     }//GEN-LAST:event_btnSalvarActionPerformed
 
+    private void btnNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoActionPerformed
+
+        this.habilitarCampos(); // Chamando o método para abstrair o processo de habilitação dos campos
+    }//GEN-LAST:event_btnNovoActionPerformed
+
+    private void btnExportarCSVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportarCSVActionPerformed
+
+        try {
+
+            this.exportarParaCSV( /* "lista_cliente.csv" */);  // Chamando o método de exportação
+
+        } catch (Exception ex) {
+            Logger.getLogger(FrCadCliente.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnExportarCSVActionPerformed
+
+    private void btnImportarCSVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportarCSVActionPerformed
+        // TODO add your handling code here:
+
+        this.importarCSV(); // Chamando o método definido via interface
+    }//GEN-LAST:event_btnImportarCSVActionPerformed
+
     private void limparTexto() {
         edtNome.setText("");
         edtIdade.setText("");
         edtSexo.setText("");
         edtSalario.setText("");
         edtCpf.setText("");
-        edtGerenciaFuncionarios.setText("");
-        edtSenha.setText("");
-        edtCargaHoraria.setText("");
+
+//        edtGerenciaFuncionarios.setText("");
+//        edtSenha.setText("");
+//        edtCargaHoraria.setText("");
     }
 
     private void salvarCliente() {
@@ -439,166 +353,284 @@ public class FrCadCliente extends javax.swing.JFrame {
 
         lstCliente.add(c);
 
-        String imprimirFr = "";
-        for (int i = 0; i < lstCliente.size(); ++i) {
-            imprimirFr = imprimirFr + lstCliente.get(i).imprimir() + "\n\n";
-        }
+//        String imprimirFr = "";
+//        for (int i = 0; i < lstCliente.size(); ++i) {
+//            imprimirFr = imprimirFr + lstCliente.get(i).imprimir() + "\n\n";
+//        }
 //        edtResultado.setText(imprimirFr);
+        // Readicionando a lista para atualizar o objeto jTable "grdLista
+//        TMCliente tm_cliente = new TMCliente(this.lstCliente);
+//        this.grdLista.setModel(tm_cliente);
+        // Chamando a rotina de atualização da tabela
+        this.atualizarTabela();
 
     }
 
-    private void salvarEngenheiro() {
-        String nome = edtNome.getText();
-        int idade = Integer.parseInt(edtIdade.getText());
-        char sexo = edtSexo.getText().charAt(0);
-        float horasTrabalho = Float.parseFloat(edtCargaHoraria.getText());
-        float salario = Float.parseFloat(edtSalario.getText());
+    @Override
+    public void atualizarTabela() {
+//    private void atualizarTabela() {
 
-        Engenheiro e = new Engenheiro();
-        e.preencher(nome, sexo, idade, horasTrabalho, salario);
-        lstEngenheiro.add(e);
-
-        String imprimirFr = "";
-        for (int i = 0; i < lstEngenheiro.size(); ++i) {
-            imprimirFr = imprimirFr + lstEngenheiro.get(i).imprimir() + "\n\n";
-        }
-
-//        edtResultado.setText(imprimirFr);
-    }
-
-    private void salvarDiretor() {
-        String nome = edtNome.getText();
-        int idade = Integer.parseInt(edtIdade.getText());
-        char sexo = edtSexo.getText().charAt(0);
-        float horasTrabalho = Float.parseFloat(edtCargaHoraria.getText());
-        float salario = Float.parseFloat((edtSalario.getText()));
-        String senha = edtSenha.getText();
-
-        Diretor d = new Diretor();
-        d.preencher(nome, sexo, idade, horasTrabalho, salario, senha);
-
-        lstDiretor.add(d);
-
-        String imprimirFr = "";
-        for (int i = 0; i < lstDiretor.size(); ++i) {
-            imprimirFr = imprimirFr + lstDiretor.get(i).imprimir() + "\n\n";
-        }
-
-//        edtResultado.setText(imprimirFr);
-    }
-
-    private void salvarSecretario() {
-        String nome = edtNome.getText();
-        int idade = Integer.parseInt(edtIdade.getText());
-        char sexo = edtSexo.getText().charAt(0);
-        float horasTrabalho = Float.parseFloat(edtCargaHoraria.getText());
-        float salario = Float.parseFloat((edtSalario.getText()));
-
-        Secretario s = new Secretario();
-        s.preencher(nome, sexo, idade, horasTrabalho, salario);
-
-        lstSecretario.add(s);
-
-        String imprimirFr = "";
-        for (int i = 0; i < lstSecretario.size(); ++i) {
-            imprimirFr = imprimirFr + lstSecretario.get(i).imprimir() + "\n\n";
-        }
-
-//        edtResultado.setText(imprimirFr);
-    }
-
-    private void salvarGerente() {
-        String nome = edtNome.getText();
-        int idade = Integer.parseInt(edtIdade.getText());
-        char sexo = edtSexo.getText().charAt(0);
-        float horasTrabalho = Float.parseFloat(edtCargaHoraria.getText());
-        float salario = Float.parseFloat((edtSalario.getText()));
-        String senha = edtSenha.getText();
-        int pessoasGerenciadas = Integer.parseInt(edtGerenciaFuncionarios.getText());
-
-        Gerente g = new Gerente();
-        g.preencher(nome, sexo, idade, horasTrabalho, salario, senha, pessoasGerenciadas);
-
-        lstGerente.add(g);
-
-        String imprimirFr = "";
-        for (int i = 0; i < lstGerente.size(); ++i) {
-            imprimirFr = imprimirFr + lstGerente.get(i).imprimir() + "\n\n";
-        }
-
-//        edtResultado.setText(imprimirFr);
-    }
-
-    public void atualizarTabela() {/*
         TMCliente clientes = new TMCliente(lstCliente);
-        grdCliente.setModel(clientes);*/
+        this.grdLista.setModel(clientes);
     }
 
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+    /**
+     * Método para abstrair o processo de habilitação dos campos
+     */
+    public void habilitarCampos() {
+
+        this.edtCpf.setEnabled(true);
+        this.edtIdade.setEnabled(true);
+        this.edtNome.setEnabled(true);
+        this.edtSalario.setEnabled(true);
+        this.edtSexo.setEnabled(true);
+    }
+
+    @Override
+    public void exportarParaCSV( /* String nome_arquivo */) /* throws Exception */ {
+
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // Vamos utilizar a classe java.file.FileWriter para salvar no arquivo
+        FileWriter file_writer_arquivo = null;
+
+        // A classe java.file.PrintWriter fará a escrita no arquivo de fato
+        PrintWriter print_writer_arquivo = null;
+
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FrCadCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FrCadCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FrCadCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FrCadCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
+//            FileWriter file_writer_arquivo = null;
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new FrCadCliente().setVisible(true);
+//            this.caminho_arquivo
+            file_writer_arquivo = new FileWriter(caminho_arquivo.toString());   // Instanciando com o caminho definido no início da classe
+
+            print_writer_arquivo = new PrintWriter(file_writer_arquivo);
+
+            // Gerando a lista em formato CSV e colocando para imprimir no arquivo usando o método PrintWriter.print() 
+            print_writer_arquivo.print(this.imprimirListaCSV());
+
+            file_writer_arquivo.close();
+
+            JOptionPane.showMessageDialog(this,
+                    "Lista de clientes salva no arquivo '" + caminho_arquivo.toString() + "' com sucesso!",
+                    "Aviso",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (IOException ex) {
+//            Logger.getLogger(FrCadAluno2.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FrCadCliente.class.getName()).log(Level.SEVERE, null, ex);
+
+            // Còdigo para finalizar o recurso "print_writer_arquivo"
+        } finally {
+
+            if (print_writer_arquivo != null) {
+                print_writer_arquivo.close();
             }
-        });
+        }
     }
+
+    @Override
+    public String imprimirListaCSV() {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        int i;
+        String csv = "";
+
+//        for (i = 0; i < lista.size(); i++) {    // loop para percorrer os registros
+        for (i = 0; i < this.lstCliente.size(); i++) {    // loop para percorrer os registros
+
+//            csv += lista.get(i).getMatricula() + ";";   // campo "matrícula"
+            csv += this.lstCliente.get(i).getCpf() + ";";   // campo "matrícula"
+
+//            csv += lista.get(i).getNome() + ";";        // campo "nome"
+            csv += this.lstCliente.get(i).getNome() + ";";        // campo "nome"
+
+//            csv += lista.get(i).getIdade() + ";";       // campo "idade"
+            csv += this.lstCliente.get(i).getIdade() + ";";       // campo "idade"
+
+//            csv += lista.get(i).getSexo() + ";\n";      // campo "sexo"
+//            csv += lista.get(i).getSexo() + ";";        // Para corrigir um incidente envolvendo o método de leitura, onde se lê o caracter "\n"
+            csv += this.lstCliente.get(i).getSexo() + ";";        // Para corrigir um incidente envolvendo o método de leitura, onde se lê o caracter "\n"
+        }
+
+        return csv;
+    }
+
+    @Override
+    public void importarCSV() {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        FileReader file_reader_arquivo = null;
+        Scanner sc_arquivo = null;
+
+//        ArrayList<Aluno> lstAluno = new ArrayList<>();
+        ArrayList<Cliente> lstCliente = new ArrayList<>();
+
+        try {
+
+
+            // Usando o método Path.toString() para retornar o diretório no formato de string
+            /*FileReader */ file_reader_arquivo = new FileReader(caminho_arquivo.toString());
+
+            /*Scanner */ sc_arquivo = new Scanner(file_reader_arquivo);  // Criando um objeto "Scanner" para ler do objeto "FileReader"
+
+            // Como o formato de arquivo escolhido é o CSV, vamos alterar o delimitador para o caractere ";"
+            sc_arquivo.useDelimiter(";");
+
+            // Por questão de ambiguidade do verificador de sintaxe da IDE e do compilador, fiz a inicialização manual das variáveis
+            int /* cpf = 0, */ idade = -1;
+            String cpf = "";
+
+            String nome = "";
+            char sexo = 'M';
+
+            // Ordem de colunas: Matricula -> Nome -> Idade -> Sexo
+            // A estratégia é percorrer os campos até não haver mais nenhum para ler (informado pelo método sc_Arquivo.hasNext() )
+            // Para tal, utilizaremos um while com uma variável de controle "campo" e um contador "i"
+            // ela indicará qual o tipo de campo que é
+            // Para fazer isso, faremos uma matemática básica
+            // Como são 4 campos, se implementarmos um contador de campos, observaremos um certo padrão:
+            // 1) O campo de matrícula aparecerá quando aparecer resto 0 numa divisão de i por 4;
+            // 2) O campo de nome aparecerá quando aparecer resto 1 numa divisão de i por 4;
+            // 3) O campo de idade aparecerá quando aparecer resto 2 numa divisão de i por 4;
+            // 4) O campo de sexo aparecerá quando aparecer resto 3 numa divisão de i por 4.
+            // A partir desses padrões, faremos a identificação do campo lido e colocaremos no vetor lstAluno
+            int campo = 0, i = 0;
+
+//            final int CAMPO_MATRICULA = 0;  // a cláusula "final" indica que se trata de uma constante
+            final int CAMPO_CPF = 0;  // a cláusula "final" indica que se trata de uma constante
+
+            final int CAMPO_NOME = 1;
+            final int CAMPO_IDADE = 2;
+            final int CAMPO_SEXO = 3;
+
+            while (sc_arquivo.hasNext()) {
+
+                campo = i % 4; // Obtendo o resto da divisão de i por 4
+
+                switch (campo) {
+
+//                    case CAMPO_MATRICULA:
+                    case CAMPO_CPF:
+//                        cpf = sc_arquivo.nextInt();
+                        cpf = sc_arquivo.next();
+                        break;
+
+                    case CAMPO_NOME:
+                        nome = sc_arquivo.next();
+                        break;
+
+                    case CAMPO_IDADE:
+                        idade = sc_arquivo.nextInt();
+                        break;
+
+                    case CAMPO_SEXO:
+
+                        // Como o sexo é o último campo, vamos instanciar o objeto e armazenar na lista
+                        sexo = sc_arquivo.next().charAt(0); // Por se tratar de um char, tem que retirar apenas o primeiro caracter
+
+//                        Aluno a = new Aluno(nome, sexo, idade, cpf);  // Instanciando o aluno
+                        Cliente a = new Cliente();  // Instanciando o cliente
+                        a.preencher(nome, sexo, idade, cpf);
+
+                        lstCliente.add(a);
+                        break;
+                }
+
+                i++;    // Incrementando o contador para poder fazer a divisão
+            }
+
+            file_reader_arquivo.close();
+
+            // Código gerado automaticamente pelo NetBeans
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(FrCadCliente.class.getName()).log(Level.SEVERE, null, ex);  // Esse método só faz o log do erro
+
+            // Como o método FileReader.close() dispara uma exceção diferente ("IOException"), 
+            // coloquei o método genérico para a classe "IOException"
+        } catch (IOException e) {
+            Logger.getLogger(FrCadCliente.class.getName()).log(Level.SEVERE, null, e);
+
+        } finally { // A cláusula "finally" é recomendada pelo Java para finalizar os objetos ligados a recursos utilizados
+
+            if (sc_arquivo != null) {
+                sc_arquivo.close();
+            }
+
+            /*
+            try {
+                file_reader_arquivo.close();
+            } catch (IOException ex) {
+                Logger.getLogger(FrCadAluno2.class.getName()).log(Level.SEVERE, null, ex);
+            }
+             */
+        }
+
+//        this.lista = lstCliente;
+        this.lstCliente = lstCliente;
+
+//        edtResultado.setText(this.imprimirListaCompleta());
+        this.atualizarTabela();
+
+        JOptionPane.showMessageDialog(this, "Arquivo '" + caminho_arquivo.toString() + "' carregado com sucesso!", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+
+    }
+
+//    public static void main(String args[]) {
+//        /* Set the Nimbus look and feel */
+//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+//         */
+//        try {
+//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch (ClassNotFoundException ex) {
+//            java.util.logging.Logger.getLogger(FrCadCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (InstantiationException ex) {
+//            java.util.logging.Logger.getLogger(FrCadCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (IllegalAccessException ex) {
+//            java.util.logging.Logger.getLogger(FrCadCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+//            java.util.logging.Logger.getLogger(FrCadCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        }
+//        //</editor-fold>
+//        //</editor-fold>
+//        //</editor-fold>
+//        //</editor-fold>
+//
+//        /* Create and display the form */
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new FrCadCliente().setVisible(true);
+//            }
+//        });
+//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
-    private javax.swing.JRadioButton btnCliente;
-    private javax.swing.JRadioButton btnDiretor;
     private javax.swing.JButton btnEditar;
-    private javax.swing.JRadioButton btnEngenheiro;
     private javax.swing.JButton btnExcluir;
-    private javax.swing.JRadioButton btnGerente;
+    private javax.swing.JButton btnExportarCSV;
     private javax.swing.ButtonGroup btnGrupo;
+    private javax.swing.JButton btnImportarCSV;
     private javax.swing.JButton btnNovo;
     private javax.swing.JButton btnSalvar;
-    private javax.swing.JRadioButton btnSecretario;
-    private javax.swing.JTextField edtCargaHoraria;
     private javax.swing.JTextField edtCpf;
-    private javax.swing.JTextField edtGerenciaFuncionarios;
     private javax.swing.JTextField edtIdade;
     private javax.swing.JTextField edtNome;
     private javax.swing.JTextField edtSalario;
-    private javax.swing.JTextField edtSenha;
     private javax.swing.JTextField edtSexo;
+    private javax.swing.JTable grdLista;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTableLista;
-    private javax.swing.JLabel lblCargaHoraria;
     private javax.swing.JLabel lblCpf;
-    private javax.swing.JLabel lblGerenciaFuncionarios;
     private javax.swing.JLabel lblIdade;
     private javax.swing.JLabel lblNome;
     private javax.swing.JLabel lblSalario;
-    private javax.swing.JLabel lblSenha;
     private javax.swing.JLabel lblSexo;
     private javax.swing.JLabel lblTitulo;
     // End of variables declaration//GEN-END:variables
+
 }
